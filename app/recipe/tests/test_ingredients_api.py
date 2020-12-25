@@ -50,11 +50,13 @@ class PrivateIngredientsApiTest(TestCase):
             '1233467'
         )
         Ingredient.objects.create(user=user2, name='Salt')
-        ingredient = Ingredient.objects.create(user=self.user, name='Sugar')
+        Ingredient.objects.create(user=self.user, name='Sugar')
+        ingredient = Ingredient.objects.filter(user=self.user)
         res = self.client.get(INGREDIENTS_URL)
+        serializer = IngredientSerializer(ingredient, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
-        self.assertEqual(res.data[0]['name'], ingredient.name)
+        self.assertEqual(res.data, serializer.data)
 
     def test_create_ingredient_successful(self):
         """Test create a new ingredient"""
